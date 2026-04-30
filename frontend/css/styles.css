@@ -1,0 +1,566 @@
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #ffffff;
+    --bg-secondary: #f6f8fa;
+    --bg-card: #ffffff;
+    --border: #d1d9e0;
+    --border-light: #e8ecf0;
+    --text: #1f2328;
+    --text-muted: #656d76;
+    --accent: #0969da;
+    --accent-light: #ddf4ff;
+    --pin: #b8860b;
+    --green: #1a7f37;
+    --red: #cf222e;
+    --orange: #bc4c00;
+    --unread-bg: #ddf4ff;
+    --shadow: 0 1px 3px rgba(31, 35, 40, 0.08);
+    --shadow-md: 0 3px 8px rgba(31, 35, 40, 0.12);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-secondary);
+    color: var(--text);
+    line-height: 1.5;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* Header */
+#app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 1.5rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    box-shadow: var(--shadow);
+}
+
+.header-left h1 { font-size: 1.15rem; font-weight: 600; color: var(--text); }
+.header-left .subtitle { font-size: 0.7rem; color: var(--text-muted); margin-left: 0.5rem; }
+.header-right { display: flex; align-items: center; gap: 1rem; }
+
+.slack-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s;
+}
+.slack-toggle:hover:not(:disabled) { border-color: var(--text-muted); }
+.slack-toggle:disabled { opacity: 0.5; cursor: not-allowed; }
+.slack-toggle .slack-toggle-label { letter-spacing: 0.5px; text-transform: uppercase; }
+.slack-toggle .slack-toggle-state {
+    padding: 1px 6px;
+    border-radius: 999px;
+    font-size: 0.62rem;
+    color: white;
+    background: var(--text-muted);
+}
+.slack-toggle.on { border-color: var(--green); color: var(--green); }
+.slack-toggle.on .slack-toggle-state { background: var(--green); }
+.slack-toggle.off { border-color: var(--red); color: var(--red); }
+.slack-toggle.off .slack-toggle-state { background: var(--red); }
+
+#stats-bar { display: flex; gap: 0.4rem; }
+
+.stat-chip {
+    background: var(--bg-secondary);
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border-light);
+}
+
+.stat-chip.connected { color: var(--green); border-color: var(--green); background: #dafbe1; }
+.stat-chip.unread-chip { color: var(--orange); border-color: var(--orange); background: #fff8c5; }
+
+/* Bell */
+.icon-btn {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    cursor: pointer;
+    padding: 0.4rem;
+    position: relative;
+    display: flex;
+    align-items: center;
+    transition: background 0.15s;
+}
+
+.icon-btn:hover { background: var(--bg-secondary); }
+
+.badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--red);
+    color: white;
+    font-size: 0.55rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    border-radius: 10px;
+    min-width: 16px;
+    text-align: center;
+}
+
+.badge.hidden { display: none; }
+
+/* Toolbar */
+#toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1.5rem;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    gap: 1rem;
+}
+
+.toolbar-left { display: flex; gap: 0.5rem; }
+.toolbar-right { display: flex; gap: 0.5rem; }
+
+.repo-count-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 0.35rem 0.5rem;
+}
+
+#search-input {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    width: 200px;
+}
+
+#search-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.15); }
+#search-input::placeholder { color: var(--text-muted); }
+
+#repo-sort, #read-filter {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.35rem 0.5rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+}
+
+/* Content Area */
+#content-area {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1px;
+    background: var(--border);
+    height: calc(100vh - 100px);
+    overflow: hidden;
+}
+
+/* Repo Panel */
+#repo-panel {
+    background: var(--bg-secondary);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.section-label {
+    padding: 0.5rem 1rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+}
+
+#repo-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.repo-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 0.65rem 0.85rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    box-shadow: var(--shadow);
+}
+
+.repo-card:hover { border-color: var(--accent); box-shadow: var(--shadow-md); }
+.repo-card.selected { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.25); background: var(--accent-light); }
+
+.repo-card.pinned {
+    border-color: var(--pin);
+    background: #fffbeb;
+}
+
+.repo-card.pinned:hover { border-color: var(--pin); }
+
+.repo-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.25rem;
+}
+
+.repo-card-left {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-width: 0;
+}
+
+.pin-btn {
+    background: none;
+    border: none;
+    color: var(--border);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    transition: color 0.15s, transform 0.15s;
+    border-radius: 4px;
+}
+
+.pin-btn:hover { color: var(--pin); transform: scale(1.15); }
+.pin-btn.active { color: var(--pin); }
+
+.repo-card-badges {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    flex-shrink: 0;
+}
+
+.repo-unread-badge {
+    background: var(--red);
+    color: white;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.4;
+    animation: badgePop 0.3s ease-out;
+}
+
+@keyframes badgePop {
+    0% { transform: scale(0); }
+    60% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.repo-unread-badge.badge-normal {
+    background: var(--red);
+}
+
+.repo-unread-badge.badge-maintainer {
+    background: var(--green);
+}
+
+.repo-number {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    min-width: 28px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.repo-name { font-weight: 600; font-size: 0.82rem; color: var(--accent); }
+
+.issue-repo-tag {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    padding: 1px 6px;
+    border-radius: 8px;
+}
+
+.repo-description {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.repo-stats {
+    display: flex;
+    gap: 0.75rem;
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
+.weight-badge {
+    font-size: 0.6rem;
+    color: var(--orange);
+    font-weight: 600;
+}
+
+/* Repo Pagination */
+#repo-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    background: var(--bg);
+}
+
+#repo-pagination button, #issues-pagination button {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.75rem;
+    transition: background 0.15s;
+}
+
+#repo-pagination button:hover, #issues-pagination button:hover {
+    background: var(--bg-secondary);
+}
+
+#repo-pagination button:disabled, #issues-pagination button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Issues Panel */
+#issues-panel {
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+#issues-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    gap: 0.5rem;
+    background: var(--bg);
+}
+
+#issues-header h2 { font-size: 0.9rem; font-weight: 600; }
+.issues-header-left { display: flex; flex-direction: column; }
+#issues-subtitle { font-size: 0.7rem; }
+#issues-controls { display: flex; gap: 0.4rem; align-items: center; }
+
+.btn-small {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--accent);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    transition: background 0.15s;
+}
+
+.btn-small:hover { background: var(--accent-light); }
+
+#issues-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0;
+}
+
+.issue-item {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.15s;
+    cursor: pointer;
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+
+.issue-item:hover { background: var(--bg-secondary); }
+
+.issue-item.unread {
+    background: var(--unread-bg);
+    border-left: 3px solid var(--accent);
+}
+
+.mark-read-btn {
+    background: var(--accent);
+    border: none;
+    color: white;
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+    align-self: center;
+    transition: background 0.15s, transform 0.1s;
+    box-shadow: 0 1px 3px rgba(9, 105, 218, 0.3);
+}
+
+.mark-read-btn:hover {
+    background: #0860c4;
+    transform: scale(1.05);
+}
+
+.issue-read-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+    margin-top: 0.4rem;
+}
+
+.issue-item:not(.unread) .issue-read-indicator { background: transparent; }
+
+.issue-content { flex: 1; min-width: 0; }
+
+.issue-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.2rem;
+}
+
+.issue-title {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.82rem;
+}
+
+.issue-title:hover { text-decoration: underline; }
+
+.issue-repo-tag {
+    font-size: 0.6rem;
+    padding: 1px 5px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.issue-labels {
+    display: flex;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.2rem;
+}
+
+.label {
+    font-size: 0.6rem;
+    padding: 0 5px;
+    border-radius: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-light);
+    color: var(--text-muted);
+}
+
+.issue-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    flex-wrap: wrap;
+}
+
+.author-role {
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 1px 5px;
+    border-radius: 6px;
+    border: 1px solid;
+}
+
+.author-role.role-owner { color: #9a6700; background: #fff8c5; border-color: #d4a72c; }
+.author-role.role-member { color: #0550ae; background: #ddf4ff; border-color: #54aeff; }
+.author-role.role-collaborator { color: #1a7f37; background: #dafbe1; border-color: #4ac26b; }
+.author-role.role-contributor { color: #6e5494; background: #fbefff; border-color: #b87fff; }
+
+.issue-body-preview {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.text-muted { color: var(--text-muted); }
+
+/* Issues Pagination */
+#issues-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    border-top: 1px solid var(--border);
+}
+
+#issues-page-info, #repo-page-info {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+/* Loading */
+.loading-state, .empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-secondary); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+@media (max-width: 768px) {
+    #content-area { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; }
+    #toolbar { flex-wrap: wrap; }
+}

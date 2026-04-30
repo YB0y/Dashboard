@@ -1,0 +1,19 @@
+[Unit]
+Description=Gittensor Dashboard
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=uni
+Group=uni
+WorkingDirectory=/home/uni/Documents/GPT/gittensor-dashboard
+EnvironmentFile=/home/uni/Documents/GPT/gittensor-dashboard/.env
+ExecStart=/usr/bin/python3 /home/uni/Documents/GPT/gittensor-dashboard/run_prod.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=append:/var/log/gittensor.log
+StandardError=append:/var/log/gittensor.log
+
+[Install]
+WantedBy=multi-user.target

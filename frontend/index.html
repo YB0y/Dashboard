@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gittensor Dashboard - SN74 Repository Monitor</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/css/notifications.css">
+</head>
+<body>
+    <!-- HEADER -->
+    <header id="app-header">
+        <div class="header-left">
+            <h1>Gittensor Dashboard</h1>
+            <span class="subtitle">Bittensor SN74 - Open Source Repository Monitor</span>
+        </div>
+        <div class="header-right">
+            <div id="stats-bar">
+                <span id="stat-repos" class="stat-chip" title="Total monitored repositories">0 Repos</span>
+                <span id="stat-issues" class="stat-chip" title="Total open issues across all repos">0 Open Issues</span>
+                <span id="stat-unread" class="stat-chip unread-chip" title="Issues you haven't checked yet">0 Unread</span>
+                <span id="stat-connection" class="stat-chip" title="WebSocket connection status">Connecting...</span>
+            </div>
+            <button id="slack-toggle" class="slack-toggle" title="Toggle Slack alerts" aria-pressed="true">
+                <span class="slack-toggle-label">Slack</span>
+                <span class="slack-toggle-state" id="slack-toggle-state">ON</span>
+            </button>
+            <button id="notification-bell" class="icon-btn" aria-label="New Issue Notifications" title="New Issue Alerts">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                </svg>
+                <span id="notification-badge" class="badge hidden">0</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- NOTIFICATION PANEL (New Issue Alerts) -->
+    <aside id="notification-panel" class="panel hidden">
+        <div class="panel-header">
+            <h2>New Issue Alerts</h2>
+            <button id="mark-all-notif-read-btn">Dismiss All</button>
+        </div>
+        <div id="notification-list"></div>
+    </aside>
+
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- MAIN CONTENT -->
+    <main>
+        <!-- TOOLBAR -->
+        <nav id="toolbar">
+            <div class="toolbar-left">
+                <span class="repo-count-label" id="count-all-label">0 repositories</span>
+            </div>
+            <div class="toolbar-right">
+                <input type="text" id="search-input" placeholder="Search repositories..." title="Filter repos by name">
+                <select id="repo-sort" title="Sort repositories by">
+                    <option value="recent" selected>Sort: Recent Issues</option>
+                    <option value="weight">Sort: Weight (Gittensor)</option>
+                    <option value="stars">Sort: GitHub Stars</option>
+                </select>
+            </div>
+        </nav>
+
+        <!-- THREE-PANEL LAYOUT -->
+        <div id="content-area">
+            <!-- LEFT: Repository List -->
+            <section id="repo-panel">
+                <div class="section-label">Repositories</div>
+                <div id="repo-grid">
+                    <div class="loading-state">Loading 1,414 repositories...</div>
+                </div>
+                <div id="repo-pagination">
+                    <button id="repo-prev" disabled>&lt; Prev</button>
+                    <span id="repo-page-info">Page 1</span>
+                    <button id="repo-next">Next &gt;</button>
+                </div>
+            </section>
+
+            <!-- RIGHT: Issues Panel -->
+            <section id="issues-panel">
+                <div id="issues-header">
+                    <div class="issues-header-left">
+                        <h2 id="issues-title">Latest Issues</h2>
+                        <span id="issues-subtitle" class="text-muted">Click a repo to filter, or view all</span>
+                    </div>
+                    <div id="issues-controls">
+                        <select id="read-filter" title="Filter by read status">
+                            <option value="">All Issues</option>
+                            <option value="unread">Unread Only</option>
+                            <option value="read">Read Only</option>
+                        </select>
+                        <button id="mark-all-read-btn" class="btn-small" title="Mark all visible issues as read">Mark All Read</button>
+                    </div>
+                </div>
+                <div id="issues-list">
+                    <div class="loading-state">Loading issues...</div>
+                </div>
+                <div id="issues-pagination">
+                    <button id="issues-prev" disabled>&lt; Prev</button>
+                    <span id="issues-page-info">Page 1</span>
+                    <button id="issues-next">Next &gt;</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="/static/js/utils.js"></script>
+    <script src="/static/js/api.js"></script>
+    <script src="/static/js/websocket.js"></script>
+    <script src="/static/js/notifications.js"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/issues.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"uvicorn.*backend\")",
+      "Bash(pkill -f \"python.*run.py\")",
+      "Bash(python run.py)",
+      "Bash(python3 run.py)",
+      "Bash(./venv/bin/python run.py)",
+      "Bash(.venv/bin/python run.py)",
+      "Bash(lsof -ti:8000)",
+      "Bash(xargs kill:*)",
+      "Bash(systemctl --user restart tool-first)",
+      "Bash(systemctl --user status tool-first --no-pager)",
+      "Bash(journalctl --user -u tool-first --since \"2 min ago\" --no-pager)",
+      "Bash(journalctl --user -u tool-first --since '1 min ago' --no-pager)",
+      "Bash(echo \"exit: $?\")"
+    ]
+  }
+}
